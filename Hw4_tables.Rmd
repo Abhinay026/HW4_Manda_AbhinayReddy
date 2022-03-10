@@ -1,0 +1,71 @@
+---
+title: "HW4_566"
+author: "Manda Abhinay Reddy"
+output: html_document
+knit: (function(input_file, encoding) {
+  out_dir <- 'docs';
+  rmarkdown::render(input_file,
+ encoding=encoding,
+ output_file=file.path(dirname(input_file), out_dir, 'index.html'))})
+---
+
+This is the unemployment data in US from 2010 to 2020. I got this data set from kaggle.
+
+Through this data set I would like to compare the unemployment rates yearly based on several categories. I have explored the unemployment in US with respect to different races living in US, also unemployment among men and women.mFinally unemployment based on education.
+
+I have grouped the data based on year and taken the average of the unemployment rates across various categories from years 2010 to 2020.
+
+I have used packages such as kableExtra to create efficient tables and make the right interpretation. All the necessary formatting and styling are used accordingly. 
+
+```{r}
+library(tidyverse)
+library(kableExtra)
+unemp <- read.csv("unemployment_data_us.csv")
+unemp <- unemp[complete.cases(unemp),]
+head(unemp)
+
+```
+
+```{r}
+
+unemp1 <- unemp %>%
+  group_by(Year) %>%
+    summarize(White = mean(White),
+              Black = mean(Black),
+              Asian = mean(Asian)
+              )
+kbl_unemp <- kbl(unemp1)
+                    
+kbl_unemp %>%
+  kable_material(lightable_options = c("striped", "hover"))
+```
+
+```{r}
+unemp2 <- unemp %>%
+  group_by(Year) %>%
+    summarize(Men = mean(Men),
+              Women = mean(Women)
+              )
+#kbl_unemp1 <- kbl(unemp2)
+
+kbl_unemp1 <- unemp2 %>% kbl(col.names = c("Year","Men","Women")) %>% add_header_above(c(" ", "Unemployment Rate among Men and Women"=2))
+
+                    
+kbl_unemp1 %>%
+  kable_material(lightable_options = c("striped", "hover"))
+```
+
+```{r}
+unemp3 <- unemp %>%
+  group_by(Year) %>%
+    summarize(Primary_School = mean(Primary_School),
+              High_School = mean(High_School),
+              Associates_Degree = mean(Associates_Degree),
+              Professional_Degree = mean(Professional_Degree)
+              )
+kbl_unemp2 <- unemp3 %>% kbl(col.names = c("Year","Primary_School","High_School","Associates","Professional")) %>% add_header_above(c(" ","Unemployment Rate based on Education"=4))
+                    
+kbl_unemp2 %>%
+  kable_material(lightable_options = c("striped", "hover"))
+```
+
